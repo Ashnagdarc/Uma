@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Header,
@@ -25,6 +26,52 @@ import {
 import Image from 'next/image';
 
 export default function RecipePage() {
+  const [timeRemaining, setTimeRemaining] = useState(25 * 60); // 25 minutes in seconds
+  const [isRunning, setIsRunning] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isRunning && timeRemaining > 0) {
+      interval = setInterval(() => {
+        setTimeRemaining((prev) => {
+          if (prev <= 1) {
+            setIsRunning(false);
+            setIsComplete(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isRunning, timeRemaining]);
+
+  const toggleTimer = useCallback(() => {
+    if (isComplete) {
+      // Reset timer
+      setTimeRemaining(25 * 60);
+      setIsComplete(false);
+      setIsRunning(true);
+    } else {
+      setIsRunning(!isRunning);
+    }
+  }, [isRunning, isComplete]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const getButtonText = () => {
+    if (isComplete) return 'Complete! Reset';
+    if (isRunning) return `${formatTime(timeRemaining)} • Pause`;
+    return timeRemaining === 25 * 60 ? 'Start Timer' : `${formatTime(timeRemaining)} • Resume`;
+  };
+
   return (
     <Container>
       <Header>
@@ -118,7 +165,9 @@ export default function RecipePage() {
           </Steps>
         </section>
       </RecipeDetails>
-      <CtaMonolith>Start Timer</CtaMonolith>
+      <CtaMonolith onClick={toggleTimer} $isRunning={isRunning} $isComplete={isComplete}>
+        {getButtonText()}
+      </CtaMonolith>
     </Container>
   );
 }

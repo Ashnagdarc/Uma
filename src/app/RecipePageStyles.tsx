@@ -208,12 +208,12 @@ export const StepContent = styled.div`
   }
 `;
 
-export const CtaMonolith = styled.button`
+export const CtaMonolith = styled.button<{ $isRunning?: boolean; $isComplete?: boolean }>`
   position: fixed;
   bottom: 3rem;
   right: 3rem;
-  background: #f5f5f5;
-  color: #0a0a0a;
+  background: ${props => props.$isComplete ? '#00ff88' : props.$isRunning ? '#ff4d00' : '#f5f5f5'};
+  color: ${props => props.$isRunning || props.$isComplete ? 'white' : '#0a0a0a'};
   padding: 1.5rem 3rem;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 500;
@@ -224,9 +224,20 @@ export const CtaMonolith = styled.button`
   z-index: 100;
   box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: ${props => props.$isRunning ? 'pulse 2s ease-in-out infinite' : 'none'};
+  
   &:hover {
     transform: translateY(-5px);
-    background: #ff4d00;
+    background: ${props => props.$isComplete ? '#00cc66' : '#ff4d00'};
     color: white;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+    }
+    50% {
+      box-shadow: 10px 10px 50px rgba(255, 77, 0, 0.8), 0 0 30px rgba(255, 77, 0, 0.5);
+    }
   }
 `;
