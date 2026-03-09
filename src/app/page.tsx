@@ -1,129 +1,51 @@
-'use client';
+import Link from 'next/link';
 
-import { useCallback, useEffect, useState } from 'react';
-import {
-  Container,
-  Header,
-  Category,
-  SearchForm,
-  SearchInput,
-  SearchButton,
-  Title,
-  RecipeDetails,
-  SectionTitle,
-  ResultsGrid,
-  ResultCard,
-  ResultTitle,
-  CategoryBadge,
-  ResultLink,
-  StatusText,
-  StatLabel,
-} from './RecipePageStyles';
-
-type SearchResult = {
-  id: number;
-  title: string;
-  category: string;
-  prepMinutes: number;
-};
-
-type RecipeSearchResponse = {
-  results: SearchResult[];
-};
-
-export default function RecipeSearchPage() {
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
-  const [searchText, setSearchText] = useState('fish');
-  const [activeQuery, setActiveQuery] = useState('fish');
-
-  const fetchRecipes = useCallback(async (query: string) => {
-    try {
-      setIsLoading(true);
-      setFetchError(null);
-
-      const response = await fetch(
-        `/api/food?query=${encodeURIComponent(query)}&limit=16`,
-        { cache: 'no-store' }
-      );
-      const data = (await response.json()) as RecipeSearchResponse & {
-        error?: string;
-      };
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch recipes');
-      }
-
-      setResults(data.results ?? []);
-    } catch (error) {
-      setFetchError(
-        error instanceof Error ? error.message : 'Unable to load recipes'
-      );
-      setResults([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchRecipes(activeQuery);
-  }, [activeQuery, fetchRecipes]);
-
-  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const trimmedQuery = searchText.trim();
-    if (!trimmedQuery) {
-      return;
-    }
-    setActiveQuery(trimmedQuery);
-  };
-
+export default function HomePage() {
   return (
-    <Container>
-      <Header>
-        <SearchForm onSubmit={handleSearch}>
-          <SearchInput
-            type="text"
-            value={searchText}
-            onChange={(event) => setSearchText(event.target.value)}
-            placeholder="Try fish, pasta, chicken, vegan..."
-            aria-label="Search recipes"
-          />
-          <SearchButton type="submit" disabled={isLoading}>
-            Search
-          </SearchButton>
-        </SearchForm>
-        <Category>Recipe Search / {activeQuery}</Category>
-        <Title>Find Your Meal</Title>
-      </Header>
-
-      <RecipeDetails>
-        {isLoading && <StatusText>Loading recipes...</StatusText>}
-        {fetchError && <StatusText $error>{fetchError}</StatusText>}
-
-        <section id="results">
-          <SectionTitle>Available Meals</SectionTitle>
-          <ResultsGrid>
-            {results.map((result) => (
-              <ResultLink key={result.id} href={`/recipe/${result.id}`}>
-                <ResultCard>
-                  <CategoryBadge>{result.category}</CategoryBadge>
-                  <ResultTitle>{result.title}</ResultTitle>
-                  <StatLabel>
-                    {result.prepMinutes > 0
-                      ? `${result.prepMinutes} min`
-                      : 'Prep time N/A'}
-                  </StatLabel>
-                </ResultCard>
-              </ResultLink>
-            ))}
-          </ResultsGrid>
-          {!isLoading && !fetchError && results.length === 0 && (
-            <StatusText>No recipes found for this search.</StatusText>
-          )}
-        </section>
-      </RecipeDetails>
-    </Container>
+    <main
+      style={{
+        minHeight: '100vh',
+        display: 'grid',
+        placeItems: 'center',
+        background: '#050505',
+        color: '#f5f5f5',
+        padding: '2rem',
+      }}
+    >
+      <section style={{ maxWidth: '720px', textAlign: 'center' }}>
+        <p
+          style={{
+            margin: 0,
+            color: '#ff4d00',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            fontSize: '0.8rem',
+          }}
+        >
+          UMA Recipes
+        </p>
+        <h1 style={{ fontSize: 'clamp(2rem, 6vw, 4rem)', margin: '1rem 0' }}>
+          Search meals by ingredient, cuisine, or diet.
+        </h1>
+        <p style={{ color: '#a0a0a0', marginBottom: '2rem' }}>
+          Browse all matching recipes on the search page, then open any card for full details.
+        </p>
+        <Link
+          href="/search"
+          style={{
+            display: 'inline-block',
+            background: '#ff4d00',
+            color: '#fff',
+            textDecoration: 'none',
+            padding: '0.9rem 1.3rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            fontSize: '0.8rem',
+          }}
+        >
+          Go to Search
+        </Link>
+      </section>
+    </main>
   );
 }
