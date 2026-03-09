@@ -121,4 +121,3 @@ export default function RecipePage() {
     </Container>
   );
 }
-}
