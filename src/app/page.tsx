@@ -21,7 +21,7 @@ import {
   StepContent,
   CtaMonolith
 } from './RecipePageStyles';
-[code before]
+import Image from 'next/image';
 
 export default function RecipePage() {
   return (
