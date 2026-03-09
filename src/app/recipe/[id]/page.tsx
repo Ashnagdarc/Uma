@@ -108,7 +108,7 @@ export default function RecipeDetailPage() {
   return (
     <Container>
       <Header>
-        <BackLink href="/">← Back to search</BackLink>
+        <BackLink href="/search">← Back to search</BackLink>
         <Category>{recipe?.category || 'Recipe Details'}</Category>
         <Title>{recipe?.title || 'Loading'}</Title>
         <StatsGrid>
