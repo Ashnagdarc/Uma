@@ -1,173 +1,129 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Container,
   Header,
   Category,
+  SearchForm,
+  SearchInput,
+  SearchButton,
   Title,
-  StatsGrid,
-  StatBox,
-  StatLabel,
-  StatValue,
-  MonolithVisual,
   RecipeDetails,
   SectionTitle,
-  IngredientsList,
-  IngredientItem,
-  Amount,
-  Name,
-  Steps,
-  StepBlock,
-  StepNumber,
-  StepContent,
-  CtaMonolith
+  ResultsGrid,
+  ResultCard,
+  ResultTitle,
+  CategoryBadge,
+  ResultLink,
+  StatusText,
+  StatLabel,
 } from './RecipePageStyles';
-import Image from 'next/image';
 
-export default function RecipePage() {
-  const [timeRemaining, setTimeRemaining] = useState(25 * 60); // 25 minutes in seconds
-  const [isRunning, setIsRunning] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
+type SearchResult = {
+  id: number;
+  title: string;
+  category: string;
+  prepMinutes: number;
+};
+
+type RecipeSearchResponse = {
+  results: SearchResult[];
+};
+
+export default function RecipeSearchPage() {
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState('fish');
+  const [activeQuery, setActiveQuery] = useState('fish');
+
+  const fetchRecipes = useCallback(async (query: string) => {
+    try {
+      setIsLoading(true);
+      setFetchError(null);
+
+      const response = await fetch(
+        `/api/food?query=${encodeURIComponent(query)}&limit=16`,
+        { cache: 'no-store' }
+      );
+      const data = (await response.json()) as RecipeSearchResponse & {
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch recipes');
+      }
+
+      setResults(data.results ?? []);
+    } catch (error) {
+      setFetchError(
+        error instanceof Error ? error.message : 'Unable to load recipes'
+      );
+      setResults([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    fetchRecipes(activeQuery);
+  }, [activeQuery, fetchRecipes]);
 
-    if (isRunning && timeRemaining > 0) {
-      interval = setInterval(() => {
-        setTimeRemaining((prev) => {
-          if (prev <= 1) {
-            setIsRunning(false);
-            setIsComplete(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedQuery = searchText.trim();
+    if (!trimmedQuery) {
+      return;
     }
-
-    return () => clearInterval(interval);
-  }, [isRunning, timeRemaining]);
-
-  const toggleTimer = useCallback(() => {
-    if (isComplete) {
-      // Reset timer
-      setTimeRemaining(25 * 60);
-      setIsComplete(false);
-      setIsRunning(true);
-    } else {
-      setIsRunning(!isRunning);
-    }
-  }, [isRunning, isComplete]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const getButtonText = () => {
-    if (isComplete) return 'Complete! Reset';
-    if (isRunning) return `${formatTime(timeRemaining)} • Pause`;
-    return timeRemaining === 25 * 60 ? 'Start Timer' : `${formatTime(timeRemaining)} • Resume`;
+    setActiveQuery(trimmedQuery);
   };
 
   return (
     <Container>
       <Header>
-        <Category>Basalt Kitchen / 004</Category>
-        <Title>Smoked<br />Charcoal<br />Ribeye</Title>
-        <StatsGrid>
-          <StatBox>
-            <StatLabel>Prep</StatLabel>
-            <StatValue>25m</StatValue>
-          </StatBox>
-          <StatBox>
-            <StatLabel>Heat</StatLabel>
-            <StatValue>High</StatValue>
-          </StatBox>
-          <StatBox>
-            <StatLabel>Yield</StatLabel>
-            <StatValue>02</StatValue>
-          </StatBox>
-        </StatsGrid>
-        <MonolithVisual>
-          <Image
-            src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=1000"
-            alt="Prime Ribeye on dark stone"
-            fill
-            style={{ objectFit: 'cover' }}
-            priority
+        <SearchForm onSubmit={handleSearch}>
+          <SearchInput
+            type="text"
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
+            placeholder="Try fish, pasta, chicken, vegan..."
+            aria-label="Search recipes"
           />
-        </MonolithVisual>
+          <SearchButton type="submit" disabled={isLoading}>
+            Search
+          </SearchButton>
+        </SearchForm>
+        <Category>Recipe Search / {activeQuery}</Category>
+        <Title>Find Your Meal</Title>
       </Header>
+
       <RecipeDetails>
-        <section id="ingredients">
-          <SectionTitle>Ingredients</SectionTitle>
-          <IngredientsList>
-            <IngredientItem>
-              <Amount>800g</Amount>
-              <Name>Dry-Aged Ribeye</Name>
-            </IngredientItem>
-            <IngredientItem>
-              <Amount>40g</Amount>
-              <Name>Black Lava Salt</Name>
-            </IngredientItem>
-            <IngredientItem>
-              <Amount>3 Sprigs</Amount>
-              <Name>Charred Rosemary</Name>
-            </IngredientItem>
-            <IngredientItem>
-              <Amount>15ml</Amount>
-              <Name>Bone Marrow Oil</Name>
-            </IngredientItem>
-            <IngredientItem>
-              <Amount>10g</Amount>
-              <Name>Activated Carbon</Name>
-            </IngredientItem>
-            <IngredientItem>
-              <Amount>4 cloves</Amount>
-              <Name>Fermented Garlic</Name>
-            </IngredientItem>
-          </IngredientsList>
-        </section>
-        <section id="process">
-          <SectionTitle>The Process</SectionTitle>
-          <Steps>
-            <StepBlock>
-              <StepNumber>01</StepNumber>
-              <StepContent>
-                <strong>Atmospheric Tempering</strong>
-                Allow the monolith of beef to reach ambient temperature (21°C). Pat dry until the surface tension is absolute. This ensures the Maillard reaction occurs without tectonic steam.
-              </StepContent>
-            </StepBlock>
-            <StepBlock>
-              <StepNumber>02</StepNumber>
-              <StepContent>
-                <strong>Mineral Application</strong>
-                Combine the activated carbon with crushed black lava salt. Rub with high pressure into the fibers, creating a dark, obsidian crust that mimics the basalt terrain.
-              </StepContent>
-            </StepBlock>
-            <StepBlock>
-              <StepNumber>03</StepNumber>
-              <StepContent>
-                <strong>Thermal Shock</strong>
-                Introduce to a cast iron surface at 260°C. Sear for 120 seconds per side. Do not agitate. Let the heat propagate through the center like magma through a vent.
-              </StepContent>
-            </StepBlock>
-            <StepBlock>
-              <StepNumber>04</StepNumber>
-              <StepContent>
-                <strong>Stasis</strong>
-                Rest the protein on a warm stone slab for exactly 8 minutes. This allows the internal kinetic energy to redistribute, ensuring structural integrity upon carving.
-              </StepContent>
-            </StepBlock>
-          </Steps>
+        {isLoading && <StatusText>Loading recipes...</StatusText>}
+        {fetchError && <StatusText $error>{fetchError}</StatusText>}
+
+        <section id="results">
+          <SectionTitle>Available Meals</SectionTitle>
+          <ResultsGrid>
+            {results.map((result) => (
+              <ResultLink key={result.id} href={`/recipe/${result.id}`}>
+                <ResultCard>
+                  <CategoryBadge>{result.category}</CategoryBadge>
+                  <ResultTitle>{result.title}</ResultTitle>
+                  <StatLabel>
+                    {result.prepMinutes > 0
+                      ? `${result.prepMinutes} min`
+                      : 'Prep time N/A'}
+                  </StatLabel>
+                </ResultCard>
+              </ResultLink>
+            ))}
+          </ResultsGrid>
+          {!isLoading && !fetchError && results.length === 0 && (
+            <StatusText>No recipes found for this search.</StatusText>
+          )}
         </section>
       </RecipeDetails>
-      <CtaMonolith onClick={toggleTimer} $isRunning={isRunning} $isComplete={isComplete}>
-        {getButtonText()}
-      </CtaMonolith>
     </Container>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import styled, { keyframes } from 'styled-components';
+import Link from 'next/link';
 
 const slideIn = keyframes`
   from { opacity: 0; transform: translateX(-30px); }
@@ -51,6 +52,50 @@ export const Category = styled.div`
   color: #ff4d00;
   opacity: 0;
   animation: ${slideIn} 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+`;
+
+export const SearchForm = styled.form`
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+`;
+
+export const SearchInput = styled.input`
+  flex: 1;
+  background: #121212;
+  border: 1px solid #2a2a2a;
+  color: #f5f5f5;
+  padding: 0.75rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+
+  &::placeholder {
+    color: #7a7a7a;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #ff4d00;
+  }
+`;
+
+export const SearchButton = styled.button`
+  background: #ff4d00;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 export const Title = styled.div`
@@ -146,6 +191,81 @@ export const IngredientsList = styled.ul`
   gap: 2rem;
 `;
 
+export const NutritionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: #2a2a2a;
+  border: 1px solid #2a2a2a;
+`;
+
+export const StatusText = styled.p<{ $error?: boolean }>`
+  font-family: 'JetBrains Mono', monospace;
+  color: ${(props) => (props.$error ? '#ff6b6b' : '#a0a0a0')};
+  letter-spacing: 0.05em;
+  margin: 0;
+`;
+
+export const ResultsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+`;
+
+export const ResultCard = styled.div`
+  background: #121212;
+  border: 1px solid #2a2a2a;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+export const ResultLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+
+  ${ResultCard} {
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  &:hover ${ResultCard} {
+    border-color: #ff4d00;
+    transform: translateY(-2px);
+  }
+`;
+
+export const BackLink = styled(Link)`
+  width: fit-content;
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: #ff4d00;
+  text-transform: uppercase;
+`;
+
+export const ResultTitle = styled.h3`
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #f5f5f5;
+  text-transform: uppercase;
+`;
+
+export const CategoryBadge = styled.span`
+  display: inline-block;
+  width: fit-content;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: #0a0a0a;
+  background: #ff4d00;
+  padding: 0.2rem 0.5rem;
+  text-transform: uppercase;
+`;
+
 export const IngredientItem = styled.li`
   padding: 1.5rem;
   background: #121212;
@@ -225,6 +345,13 @@ export const CtaMonolith = styled.button<{ $isRunning?: boolean; $isComplete?: b
   box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   animation: ${props => props.$isRunning ? 'pulse 2s ease-in-out infinite' : 'none'};
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    animation: none;
+  }
   
   &:hover {
     transform: translateY(-5px);

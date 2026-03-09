@@ -2,6 +2,18 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Create your environment file:
+
+```bash
+cp .env.example .env.local
+```
+
+Then set your Spoonacular key in `.env.local`:
+
+```bash
+SPOONACULAR_API_KEY=your_key_here
+```
+
 First, run the development server:
 
 ```bash
