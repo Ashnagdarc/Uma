@@ -29,7 +29,7 @@ import {
 } from '../../RecipePageStyles';
 
 type RecipeResponse = {
-  id: number;
+  id: string;
   title: string;
   category: string;
   image: string;
@@ -146,8 +146,8 @@ export default function RecipeDetailPage() {
         <section id="ingredients">
           <SectionTitle>Ingredients</SectionTitle>
           <IngredientsList>
-            {(recipe?.ingredients ?? []).map((ingredient) => (
-              <IngredientItem key={`${ingredient.name}-${ingredient.amount}`}>
+            {(recipe?.ingredients ?? []).map((ingredient, index) => (
+              <IngredientItem key={`${ingredient.name}-${ingredient.amount}-${index}`}>
                 <Amount>{ingredient.amount}</Amount>
                 <Name>{ingredient.name}</Name>
               </IngredientItem>

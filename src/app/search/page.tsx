@@ -21,7 +21,7 @@ import {
 } from '../RecipePageStyles';
 
 type SearchResult = {
-  id: number;
+  id: string;
   title: string;
   category: string;
   prepMinutes: number;
