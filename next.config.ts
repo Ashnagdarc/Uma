@@ -24,6 +24,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'www.themealdb.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.dummyjson.com',
+      },
     ],
   },
 };

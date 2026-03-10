@@ -60,6 +60,29 @@ export const SearchForm = styled.form`
   width: 100%;
 `;
 
+export const QuickFilters = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
+
+export const QuickFilterButton = styled.button<{ $active?: boolean }>`
+  background: ${(props) => (props.$active ? '#ff4d00' : '#121212')};
+  color: ${(props) => (props.$active ? '#fff' : '#a0a0a0')};
+  border: 1px solid ${(props) => (props.$active ? '#ff4d00' : '#2a2a2a')};
+  padding: 0.45rem 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #ff4d00;
+    color: #fff;
+  }
+`;
+
 export const SearchInput = styled.input`
   flex: 1;
   background: #121212;

@@ -10,6 +10,8 @@ export default function HomePage() {
         padding: '2.5rem 1.5rem',
         display: 'grid',
         placeItems: 'center',
+        overflowX: 'hidden',
+        boxSizing: 'border-box',
       }}
     >
       <section
@@ -21,7 +23,8 @@ export default function HomePage() {
           padding: 'clamp(1.5rem, 3vw, 3rem)',
           display: 'grid',
           gap: '2rem',
-          gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+          gridTemplateColumns: 'minmax(0, 1fr)',
+          boxSizing: 'border-box',
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -40,7 +43,7 @@ export default function HomePage() {
           <h1
             style={{
               margin: 0,
-              fontSize: 'clamp(2.5rem, 8vw, 6rem)',
+              fontSize: 'clamp(2rem, 10vw, 6rem)',
               lineHeight: 0.9,
               textTransform: 'uppercase',
               letterSpacing: '-0.04em',
@@ -109,7 +112,7 @@ export default function HomePage() {
             background: '#121212',
             padding: '1.25rem',
             display: 'grid',
-            alignContent: 'space-between',
+            alignContent: 'start',
             gap: '1rem',
           }}
         >

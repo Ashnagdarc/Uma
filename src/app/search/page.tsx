@@ -8,6 +8,8 @@ import {
   SearchForm,
   SearchInput,
   SearchButton,
+  QuickFilters,
+  QuickFilterButton,
   Title,
   RecipeDetails,
   SectionTitle,
@@ -79,6 +81,11 @@ export default function RecipeSearchPage() {
     setActiveQuery(trimmedQuery);
   };
 
+  const applyQuickFilter = (query: string) => {
+    setSearchText(query);
+    setActiveQuery(query);
+  };
+
   return (
     <Container>
       <Header>
@@ -94,6 +101,36 @@ export default function RecipeSearchPage() {
             Search
           </SearchButton>
         </SearchForm>
+        <QuickFilters>
+          <QuickFilterButton
+            type="button"
+            onClick={() => applyQuickFilter('local')}
+            $active={activeQuery.toLowerCase() === 'local'}
+          >
+            Local Favorites
+          </QuickFilterButton>
+          <QuickFilterButton
+            type="button"
+            onClick={() => applyQuickFilter('fish')}
+            $active={activeQuery.toLowerCase() === 'fish'}
+          >
+            Fish
+          </QuickFilterButton>
+          <QuickFilterButton
+            type="button"
+            onClick={() => applyQuickFilter('chicken')}
+            $active={activeQuery.toLowerCase() === 'chicken'}
+          >
+            Chicken
+          </QuickFilterButton>
+          <QuickFilterButton
+            type="button"
+            onClick={() => applyQuickFilter('vegan')}
+            $active={activeQuery.toLowerCase() === 'vegan'}
+          >
+            Vegan
+          </QuickFilterButton>
+        </QuickFilters>
         <Category>Recipe Search / {activeQuery}</Category>
         <Title>Find Your Meal</Title>
       </Header>
@@ -120,7 +157,60 @@ export default function RecipeSearchPage() {
             ))}
           </ResultsGrid>
           {!isLoading && !fetchError && results.length === 0 && (
-            <StatusText>No recipes found for this search.</StatusText>
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '3rem 1rem',
+                marginTop: '2rem',
+              }}
+            >
+              <StatusText style={{ marginBottom: '1rem' }}>
+                No recipes found for "{activeQuery}"
+              </StatusText>
+              <p
+                style={{
+                  color: '#999',
+                  fontSize: '0.95rem',
+                  lineHeight: 1.6,
+                }}
+              >
+                Try a different query or explore popular options:
+              </p>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem',
+                  justifyContent: 'center',
+                  marginTop: '1.5rem',
+                }}
+              >
+                <QuickFilterButton
+                  type="button"
+                  onClick={() => applyQuickFilter('pasta')}
+                >
+                  Pasta
+                </QuickFilterButton>
+                <QuickFilterButton
+                  type="button"
+                  onClick={() => applyQuickFilter('chicken')}
+                >
+                  Chicken
+                </QuickFilterButton>
+                <QuickFilterButton
+                  type="button"
+                  onClick={() => applyQuickFilter('salad')}
+                >
+                  Salad
+                </QuickFilterButton>
+                <QuickFilterButton
+                  type="button"
+                  onClick={() => applyQuickFilter('dessert')}
+                >
+                  Dessert
+                </QuickFilterButton>
+              </div>
+            </div>
           )}
         </section>
       </RecipeDetails>
